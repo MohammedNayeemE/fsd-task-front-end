@@ -1,0 +1,89 @@
+
+/* Styles for the App component */
+body {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  font-family: Arial, sans-serif;
+  background-color: #f4f4f4;
+}
+
+.wrapper {
+  width: 100%;
+  max-width: 800px;
+  background: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.input-fields {
+  margin-bottom: 15px;
+}
+
+.input-fields input,
+select {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 16px;
+  box-sizing: border-box;
+  transition: border-color 0.3s ease;
+}
+
+.input-fields input:focus,
+select:focus {
+  border-color: #007bff;
+  outline: none;
+}
+
+.error-text{
+	color : red;
+}
+
+select {
+  background-color: #fff;
+  cursor: pointer;
+	margin-bottom: 15px;
+	
+}
+
+.submit-button{
+	background: none;
+	border: 1px solid green;
+	width: 100%;
+	padding: 12px;
+	border-radius: 8px;
+	color: green;
+}
+.submit-button:hover{
+	cursor: pointer;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .wrapper {
+    padding: 15px;
+  }
+  .input-fields input,
+  select {
+    font-size: 14px;
+    padding: 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .wrapper {
+    padding: 10px;
+  }
+  .input-fields input,
+  select {
+    font-size: 13px;
+    padding: 8px;
+  }
+}
