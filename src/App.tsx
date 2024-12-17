@@ -35,24 +35,28 @@ const App = () => {
 		return true;
 	};
 
-	const showSuccess = async () => { toast.success("😊 submitted"); };
-	const showError = async () => { toast.error("💀 error"); };
+	const showSuccess = async (data:string) => { toast.success(`😊${data}`); };
+	const showError = async (data:string) => { toast.error(`💀${data}`); };
 
 	//const today_date = 
 
 	const isValid = async (data: any) => {
 		for (const value of Object.values(data)) {
 			// @ts-ignore
-			if (value.trim() === "") return false;
+			if (value.trim() === "") {
+				toast.error("fill up all the details");
+				return false;
+			}
 		}
 
 		let number: string = data.emp_number;
 
 		if (number.length > 10) {
+			toast.error("number should have atleast 10 digits");
 			return false;
 		}
 
-		if (!is_digit(number)) return false;
+		if (!is_digit(number)) { toast.error("phone number should be digits only"); return false }
 
 		let email: string = data.emp_email;
 
@@ -61,16 +65,17 @@ const App = () => {
 		for (const ch of email) {
 			mp.set(ch, ++i);
 		}
-		if (!mp.has("@")) { return false; }
+		if (!mp.has("@")) { toast.error("use valid email address"); return false; }
 
 		return true;
 	};
 
 	const handleSubmit = async () => {
 		const res = await isValid(form_data);
+		let response;
 		if (res) {
 			try {
-				const response = await axios.post('http://localhost:6969/employee/add-employees', {
+				response = await axios.post('https://fsd-task-front-back.onrender.com/employee/add-employees', {
 					emp_id: form_data.emp_id,
 					emp_name: form_data.emp_name,
 					emp_email: form_data.emp_email,
@@ -78,11 +83,18 @@ const App = () => {
 					emp_dep: form_data.emp_dep,
 					emp_role: form_data.emp_role,
 					emp_doj: form_data.emp_doj,
-				});
+				}, 
+				{
+					validateStatus: (status) => {
+						return status < 500; 
+				},
+				}
+				);
 
+				if(response.data.statusCode == 201) {
 				console.log(response);
 
-				await showSuccess();
+				await showSuccess(response.data.msg);
 
 				localStorage.removeItem("form_data");
 				setform_data({
@@ -95,23 +107,20 @@ const App = () => {
 					emp_dep: "",
 				});
 				console.log(form_data);
+				}
+				else if(response.data.statusCode === 404) {
+					await showError(response.data.msg);
+				}
 			} catch (err) {
 				console.error(err);
-				showError();
+				//@ts-ignore
+				await showError(response.data.msg);
 			}
 		}
 
-		if (!res) await showError();
+
 	};
 
-	//const todayDate = () => {
-	//	const today = new Date();
-	//	const year = today.getFullYear();
-	//	const month = String(today.getMonth() + 1).padStart(2, "0");
-	//	const day = String(today.getDate()).padStart(2, "0");
-	//
-	//	return `${month}-${day}-${year}`;
-	//}
 	
 	const today_date = new Date().toISOString().split("T")[0];
 
@@ -142,7 +151,7 @@ const App = () => {
 					<input type="text" name="emp_number" value={form_data.emp_number} placeholder={"enter phone_number"} onChange={handleChange} />
 				</div>
 				<div className="input-fields">
-					<input type="date" name="emp_doj" value={form_data.emp_doj} onChange={handleChange} max={today_date} />
+					<input type="date" placeholder="date of joining" name="emp_doj" value={form_data.emp_doj} onChange={handleChange} max={today_date} />
 				</div>
 				<select name="emp_dep" value={form_data.emp_dep} onChange={handleChange}>
 					<option value="" disabled selected>Select Department</option>
